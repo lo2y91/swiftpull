@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SwiftPull — downloads and file transfer between your devices</title>
+<meta name="description" content="SwiftPull is a fast download manager for Windows and Android that also moves links and files between your phone, tablet and computer over your own Wi-Fi, encrypted.">
+<meta property="og:title" content="SwiftPull">
+<meta property="og:description" content="Fast downloads, and encrypted transfer between your phone, tablet and computer.">
+<meta property="og:image" content="img/main-en.png">
+<link rel="icon" href="img/icon.png">
+<style>
+  :root {
+    --bg: #f6f7fb; --surface: #ffffff; --ink: #14162b; --ink2: #50546e; --ink3: #8388a3;
+    --line: #e4e6f0; --accent: #3b74f5; --accent-ink: #ffffff; --good: #168c50;
+    --violet: #7c5cff; --blue: #4f8bff; --cyan: #22d3ee;
+    --shadow: 0 30px 70px -30px rgba(40, 50, 120, .35);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1020; --surface: #171a30; --ink: #f1f2fa; --ink2: #b3b7cf; --ink3: #7f84a0;
+      --line: #272b47; --accent: #6b9bff; --accent-ink: #0b1026; --good: #4fd08b;
+      --shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 "Segoe UI", system-ui, -apple-system, "Noto Sans Arabic", Tahoma, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+  header.top { display: flex; align-items: center; gap: 12px; padding: 18px 0; }
+  header.top img { width: 34px; height: 34px; border-radius: 9px; }
+  header.top b { font-size: 19px; letter-spacing: .2px; }
+  header.top .sp { flex: 1; }
+  .lang {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 999px; padding: 7px 16px; font: inherit; font-size: 14.5px; cursor: pointer;
+  }
+  .lang:hover { border-color: var(--accent); }
+
+  .hero { padding: 44px 0 26px; text-align: center; }
+  .hero h1 {
+    margin: 0 auto 16px; max-width: 17ch; font-size: clamp(34px, 6.2vw, 58px); line-height: 1.1;
+    letter-spacing: -.02em; text-wrap: balance;
+  }
+  html[dir="rtl"] .hero h1 { letter-spacing: 0; line-height: 1.3; max-width: 20ch; }
+  .hero h1 em {
+    font-style: normal;
+    background: linear-gradient(100deg, var(--violet), var(--blue) 55%, var(--cyan));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lead { margin: 0 auto 28px; max-width: 60ch; color: var(--ink2); font-size: 19px; text-wrap: pretty; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .btn {
+    display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; text-decoration: none;
+    padding: 12px 22px; border-radius: 14px; font-weight: 600; min-width: 220px;
+    background: var(--accent); color: var(--accent-ink); border: 1px solid transparent;
+  }
+  .btn small { font-weight: 400; font-size: 13px; opacity: .85; }
+  .btn.alt { background: var(--surface); color: var(--ink); border-color: var(--line); }
+  .btn:hover { filter: brightness(1.06); }
+  .btn:focus-visible, .lang:focus-visible, a:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+  .hero .note { margin-top: 14px; color: var(--ink3); font-size: 14.5px; }
+
+  .shot { margin: 34px auto 0; max-width: 980px; padding: 0 4px; }
+  .shot img {
+    display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line);
+    box-shadow: var(--shadow); background: var(--surface);
+  }
+  .shot .dark { display: none; }
+  @media (prefers-color-scheme: dark) { .shot .light { display: none; } .shot .dark { display: block; } }
+
+  section { padding: 56px 0 0; }
+  h2 { font-size: clamp(25px, 3.4vw, 33px); margin: 0 0 8px; letter-spacing: -.01em; text-wrap: balance; }
+  html[dir="rtl"] h2 { letter-spacing: 0; }
+  .sub { color: var(--ink2); margin: 0 0 26px; max-width: 62ch; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+  .card h3 { margin: 0 0 6px; font-size: 18.5px; }
+  .card p { margin: 0; color: var(--ink2); font-size: 16px; }
+  .card .tag {
+    display: inline-block; margin-bottom: 12px; font-size: 12.5px; font-weight: 600; letter-spacing: .04em;
+    color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent);
+    padding: 3px 10px; border-radius: 999px;
+  }
+  html[dir="rtl"] .card .tag { letter-spacing: 0; }
+
+  .privacy {
+    margin-top: 56px; border-radius: 22px; padding: 30px 26px; color: #fff;
+    background: linear-gradient(120deg, #4a36c9, #2f63d8 55%, #1593b3);
+  }
+  .privacy h2 { color: #fff; }
+  .privacy ul { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .privacy li { background: rgba(255, 255, 255, .12); border-radius: 14px; padding: 14px 16px; font-size: 16px; }
+  .privacy li b { display: block; margin-bottom: 2px; }
+
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .steps ol { margin: 10px 0 0; padding-inline-start: 22px; color: var(--ink2); font-size: 16px; }
+  .steps li { margin-bottom: 6px; }
+  .versions { color: var(--ink3); font-size: 14.5px; margin-top: 10px; }
+
+  footer { margin-top: 64px; padding: 26px 0 44px; border-top: 1px solid var(--line); color: var(--ink3); font-size: 14.5px; }
+  footer .row { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: baseline; }
+  footer b { color: var(--ink2); }
+  [data-ar] { }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="img/icon.png" alt="">
+    <b>SwiftPull</b>
+    <span class="sp"></span>
+    <button class="lang" id="lang" type="button" aria-label="Switch language">العربية</button>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1 data-en="Downloads and <em>file transfer</em> between your devices."
+          data-ar="تنزيلاتك <em>ونقل ملفاتك</em> بين أجهزتك.">Downloads and <em>file transfer</em> between your devices.</h1>
+      <p class="lead"
+         data-en="SwiftPull is a fast download manager for Windows and Android. It also sends links and files between your phone, tablet and computer over your own Wi-Fi, encrypted, with no account and no cloud."
+         data-ar="SwiftPull برنامج تنزيل سريع لويندوز وأندرويد. ويرسل الروابط والملفات بين هاتفك وجهازك اللوحي وكمبيوترك عبر شبكة الواي فاي عندك، مشفّرة، بدون حساب وبدون سحابة.">SwiftPull is a fast download manager for Windows and Android. It also sends links and files between your phone, tablet and computer over your own Wi-Fi, encrypted, with no account and no cloud.</p>
+      <div class="cta">
+        <a class="btn" id="dl-win" href="https://github.com/lo2y91/download-manager-releases/releases">
+          <span data-en="Download for Windows" data-ar="تنزيل لويندوز">Download for Windows</span>
+          <small id="v-win" data-en="Windows 10 and 11" data-ar="ويندوز 10 و11">Windows 10 and 11</small>
+        </a>
+        <a class="btn alt" id="dl-and" href="https://github.com/lo2y91/download-manager-releases/releases">
+          <span data-en="Download for Android" data-ar="تنزيل لأندرويد">Download for Android</span>
+          <small id="v-and" data-en="Phones and tablets, Android 10+" data-ar="الهواتف والأجهزة اللوحية، أندرويد 10 فأحدث">Phones and tablets, Android 10+</small>
+        </a>
+      </div>
+      <p class="note">
+        <span data-en="Free. Have a Chromebook?" data-ar="مجاني. عندك كروم بوك؟">Free. Have a Chromebook?</span>
+        <a id="dl-cb" href="https://github.com/lo2y91/download-manager-releases/releases"
+           data-en="Get the Chromebook file" data-ar="نزّل ملف الكروم بوك">Get the Chromebook file</a>
+      </p>
+    </div>
+
+    <div class="shot">
+      <img class="light" id="shot" src="img/main-en.png" width="1770" height="1080"
+           alt="The SwiftPull window on Windows with a list of finished downloads and their categories">
+      <img class="dark" src="img/main-dark.png" width="1770" height="1080" loading="lazy"
+           alt="The SwiftPull window on Windows in its dark theme">
+    </div>
+
+    <section>
+      <h2 data-en="What it does" data-ar="ماذا يفعل">What it does</h2>
+      <p class="sub" data-en="One app on each device, working together." data-ar="تطبيق واحد على كل جهاز، ويعملان معًا.">One app on each device, working together.</p>
+      <div class="grid">
+        <div class="card">
+          <span class="tag" data-en="DOWNLOADS" data-ar="التنزيل">DOWNLOADS</span>
+          <h3 data-en="Fast, and it picks up where it stopped" data-ar="سريع، ويكمل من حيث توقف">Fast, and it picks up where it stopped</h3>
+          <p data-en="Each file comes over several connections at once. Pause, resume after a dropped connection, line downloads up in queues, or schedule them for the night."
+             data-ar="كل ملف ينزل عبر عدة اتصالات في الوقت نفسه. أوقف مؤقتًا، واستكمل بعد انقطاع الاتصال، ورتّب التنزيلات في قوائم انتظار، أو جدولها لليل.">Each file comes over several connections at once. Pause, resume after a dropped connection, line downloads up in queues, or schedule them for the night.</p>
+        </div>
+        <div class="card">
+          <span class="tag" data-en="VIDEO AND MUSIC" data-ar="فيديو وموسيقى">VIDEO AND MUSIC</span>
+          <h3 data-en="Choose the quality before it starts" data-ar="اختر الجودة قبل البدء">Choose the quality before it starts</h3>
+          <p data-en="See the size of each quality first, keep just the audio as MP3, add subtitles, or take only a part of a long video. On Android, play it in the built-in player or shrink it for sharing."
+             data-ar="شاهد حجم كل جودة أولًا، أو احتفظ بالصوت فقط بصيغة MP3، أو أضف الترجمة، أو خذ جزءًا من فيديو طويل. وعلى أندرويد شغّله في المشغّل المدمج أو اضغطه للمشاركة.">See the size of each quality first, keep just the audio as MP3, add subtitles, or take only a part of a long video. On Android, play it in the built-in player or shrink it for sharing.</p>
+        </div>
+        <div class="card">
+          <span class="tag" data-en="BETWEEN DEVICES" data-ar="بين الأجهزة">BETWEEN DEVICES</span>
+          <h3 data-en="Phone to computer, and back" data-ar="من الهاتف إلى الكمبيوتر، والعكس">Phone to computer, and back</h3>
+          <p data-en="Share a link on your phone and it starts on the computer. Send a finished video from the computer to the tablet from the right-click menu, including Windows' own Send to menu."
+             data-ar="شارك رابطًا من هاتفك فيبدأ تنزيله على الكمبيوتر. وأرسل فيديو مكتملًا من الكمبيوتر إلى الجهاز اللوحي من قائمة الزر الأيمن، ومن قائمة «إرسال إلى» في ويندوز نفسه.">Share a link on your phone and it starts on the computer. Send a finished video from the computer to the tablet from the right-click menu, including Windows' own Send to menu.</p>
+        </div>
+        <div class="card">
+          <span class="tag" data-en="TABLETS" data-ar="الأجهزة اللوحية">TABLETS</span>
+          <h3 data-en="Made for the big screen too" data-ar="مصمَّم للشاشة الكبيرة أيضًا">Made for the big screen too</h3>
+          <p data-en="A two-pane layout on tablets and Chromebooks, a floating video window while you use other apps, keyboard shortcuts, and drag a link in from the browser."
+             data-ar="واجهة من قسمين على الأجهزة اللوحية والكروم بوك، ونافذة فيديو عائمة وأنت تستخدم تطبيقات أخرى، واختصارات لوحة المفاتيح، واسحب الرابط من المتصفح مباشرة.">A two-pane layout on tablets and Chromebooks, a floating video window while you use other apps, keyboard shortcuts, and drag a link in from the browser.</p>
+        </div>
+        <div class="card">
+          <span class="tag" data-en="PRIVATE FOLDER" data-ar="المجلد الخاص">PRIVATE FOLDER</span>
+          <h3 data-en="Files only you can open" data-ar="ملفات لا يفتحها غيرك">Files only you can open</h3>
+          <p data-en="Move a download into the private folder on Android: it leaves the gallery and other apps, and opens only with your fingerprint or screen lock."
+             data-ar="انقل أي تنزيل إلى المجلد الخاص على أندرويد: يختفي من الاستوديو والتطبيقات الأخرى، ولا يُفتح إلا ببصمتك أو قفل الشاشة.">Move a download into the private folder on Android: it leaves the gallery and other apps, and opens only with your fingerprint or screen lock.</p>
+        </div>
+        <div class="card">
+          <span class="tag" data-en="ARABIC AND ENGLISH" data-ar="عربي وإنجليزي">ARABIC AND ENGLISH</span>
+          <h3 data-en="In your language, and it updates itself" data-ar="بلغتك، ويحدّث نفسه">In your language, and it updates itself</h3>
+          <p data-en="A full Arabic interface with right-to-left layout, and English. Both apps check for new versions and install them when you say so."
+             data-ar="واجهة عربية كاملة من اليمين إلى اليسار، وإنجليزية. والتطبيقان يبحثان عن الإصدارات الجديدة ويثبّتانها عندما توافق.">A full Arabic interface with right-to-left layout, and English. Both apps check for new versions and install them when you say so.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="privacy">
+      <h2 data-en="Your files stay yours" data-ar="ملفاتك تبقى لك">Your files stay yours</h2>
+      <ul>
+        <li><b data-en="No account, no cloud" data-ar="بدون حساب وبدون سحابة">No account, no cloud</b>
+          <span data-en="Files go straight from one of your devices to the other over your own Wi-Fi. Nothing is uploaded anywhere."
+                data-ar="الملفات تنتقل مباشرة من جهازك إلى جهازك الآخر عبر الواي فاي عندك. لا يُرفع شيء إلى أي مكان.">Files go straight from one of your devices to the other over your own Wi-Fi. Nothing is uploaded anywhere.</span></li>
+        <li><b data-en="Encrypted on the way" data-ar="مشفّرة في الطريق">Encrypted on the way</b>
+          <span data-en="Links and files travel encrypted (AES-256). Devices pair once with a six-digit code that is never sent over the network."
+                data-ar="الروابط والملفات تنتقل مشفّرة (AES-256). والأجهزة ترتبط مرة واحدة برمز من ستة أرقام لا يُرسل عبر الشبكة أبدًا.">Links and files travel encrypted (AES-256). Devices pair once with a six-digit code that is never sent over the network.</span></li>
+        <li><b data-en="Signed updates" data-ar="تحديثات موقّعة">Signed updates</b>
+          <span data-en="The Windows app only accepts updates signed by the publisher, and Android only installs an update signed with the same key."
+                data-ar="برنامج ويندوز لا يقبل إلا تحديثات موقّعة من الناشر، وأندرويد لا يثبّت إلا تحديثًا موقّعًا بالمفتاح نفسه.">The Windows app only accepts updates signed by the publisher, and Android only installs an update signed with the same key.</span></li>
+      </ul>
+    </div>
+
+    <section id="install">
+      <h2 data-en="Install it" data-ar="التثبيت">Install it</h2>
+      <p class="sub" data-en="Both are free. Put it on the computer and on the phone to use the link between them."
+         data-ar="كلاهما مجاني. ثبّته على الكمبيوتر وعلى الهاتف لتستخدم الربط بينهما.">Both are free. Put it on the computer and on the phone to use the link between them.</p>
+      <div class="steps">
+        <div class="card">
+          <h3>Windows</h3>
+          <ol>
+            <li data-en="Download SwiftPull-Setup.exe with the button above and open it." data-ar="نزّل SwiftPull-Setup.exe من الزر في الأعلى وافتحه.">Download SwiftPull-Setup.exe with the button above and open it.</li>
+            <li data-en="Windows may warn about an app it doesn't know yet: choose More info, then Run anyway." data-ar="قد يحذّرك ويندوز من برنامج لا يعرفه بعد: اختر «معلومات إضافية» ثم «تشغيل على أي حال».">Windows may warn about an app it doesn't know yet: choose More info, then Run anyway.</li>
+            <li data-en="It installs for your user only; no administrator password is needed." data-ar="يُثبَّت لحسابك فقط، ولا يحتاج كلمة مرور المسؤول.">It installs for your user only; no administrator password is needed.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Android</h3>
+          <ol>
+            <li data-en="Download the APK with the button above, on the phone itself." data-ar="نزّل ملف APK من الزر في الأعلى، على الهاتف نفسه.">Download the APK with the button above, on the phone itself.</li>
+            <li data-en="Open it. Android asks once to allow installing from your browser: allow it." data-ar="افتحه. سيطلب أندرويد مرة واحدة السماح بالتثبيت من المتصفح: اسمح.">Open it. Android asks once to allow installing from your browser: allow it.</li>
+            <li data-en="To link with the computer: Settings → Computer on the phone, and Options → Phone on the computer." data-ar="للربط مع الكمبيوتر: الإعدادات ← الكمبيوتر على الهاتف، والخيارات ← Phone على الكمبيوتر.">To link with the computer: Settings → Computer on the phone, and Options → Phone on the computer.</li>
+          </ol>
+        </div>
+      </div>
+      <p class="versions" id="versions"></p>
+    </section>
+
+    <section>
+      <h2 data-en="Found a problem, or want something added?" data-ar="وجدت مشكلة، أو تريد إضافة شيء؟">Found a problem, or want something added?</h2>
+      <p class="sub">
+        <span data-en="Tell me what happened and on which device." data-ar="أخبرني بما حدث وعلى أي جهاز.">Tell me what happened and on which device.</span>
+        <a href="https://github.com/lo2y91/download-manager-releases/issues/new"
+           data-en="Send feedback on GitHub" data-ar="أرسل ملاحظتك على GitHub">Send feedback on GitHub</a>
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="row">
+      <span><span data-en="Built by" data-ar="من تطوير">Built by</span> <b>Mostafa Kotb</b></span>
+      <a href="https://github.com/lo2y91/download-manager-releases/releases" data-en="All versions" data-ar="كل الإصدارات">All versions</a>
+      <span data-en="Only download content you have the right to." data-ar="نزّل فقط المحتوى الذي يحق لك تنزيله.">Only download content you have the right to.</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById("lang");
+  var versions = { win: "", and: "" };
+
+  function apply(lang) {
+    root.lang = lang;
+    root.dir = lang === "ar" ? "rtl" : "ltr";
+    document.querySelectorAll("[data-en]").forEach(function (el) {
+      el.innerHTML = el.getAttribute(lang === "ar" ? "data-ar" : "data-en");
+    });
+    btn.textContent = lang === "ar" ? "English" : "العربية";
+    document.getElementById("shot").src = lang === "ar" ? "img/main-ar.png" : "img/main-en.png";
+    document.title = lang === "ar"
+      ? "SwiftPull — تنزيلاتك ونقل ملفاتك بين أجهزتك"
+      : "SwiftPull — downloads and file transfer between your devices";
+    showVersions(lang);
+    try { localStorage.setItem("lang", lang); } catch (e) {}
+  }
+
+  function showVersions(lang) {
+    var ar = lang === "ar";
+    if (versions.win) document.getElementById("v-win").textContent = (ar ? "الإصدار " : "Version ") + versions.win + (ar ? " · ويندوز 10 و11" : " · Windows 10 and 11");
+    if (versions.and) document.getElementById("v-and").textContent = (ar ? "الإصدار " : "Version ") + versions.and + (ar ? " · أندرويد 10 فأحدث" : " · Android 10+");
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem("lang"); } catch (e) {}
+  var lang = saved || ((navigator.language || "").toLowerCase().indexOf("ar") === 0 ? "ar" : "en");
+  apply(lang);
+  btn.addEventListener("click", function () { apply(root.lang === "ar" ? "en" : "ar"); });
+
+  // The newest files, read from the same notices the apps use for their own updates. If that
+  // fails, the buttons keep pointing at the releases page.
+  var base = "https://raw.githubusercontent.com/lo2y91/download-manager-releases/main/";
+  fetch(base + "desktop/latest.json").then(function (r) { return r.json(); }).then(function (n) {
+    if (n.url && n.url.indexOf("https://github.com/lo2y91/") === 0) {
+      document.getElementById("dl-win").href = n.url;
+      versions.win = n.version;
+      showVersions(root.lang);
+    }
+  }).catch(function () {});
+  fetch(base + "android/latest.json").then(function (r) { return r.json(); }).then(function (n) {
+    if (n.url && n.url.indexOf("https://github.com/lo2y91/") === 0) {
+      document.getElementById("dl-and").href = n.url;
+      versions.and = n.versionName;
+      if (n.url_x86_64 && n.url_x86_64.indexOf("https://github.com/lo2y91/") === 0) document.getElementById("dl-cb").href = n.url_x86_64;
+      showVersions(root.lang);
+    }
+  }).catch(function () {});
+})();
+</script>
+</body>
+</html>
